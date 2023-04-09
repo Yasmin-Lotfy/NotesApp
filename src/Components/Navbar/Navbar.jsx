@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
 import style from "./Navbar.module.css"
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
+
 
 function Navbar() {
+  let navigate = useNavigate()
+  let userToken =localStorage.getItem("userToken");
 
-  console.log(localStorage.getItem("userToken"))
-  function loutOutUser(){
+  console.log(userToken)
+
+  function logutOutUser(){
   localStorage.removeItem("userToken");
+  navigate("/")
   }
   return (
     <>
@@ -19,17 +24,20 @@ function Navbar() {
     <div className="collapse navbar-collapse" id="navbarSupportedContent">
       <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
 
-      
+      {!userToken ? <>
         <li className="nav-item">
           <Link className="nav-link active" aria-current="page" to="">Register</Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="login">Login</Link>
         </li>
+      </> :""}
+       
+        {userToken?  <li className="nav-item">
+          <Link onClick={logutOutUser} className="nav-link" to="">Logout</Link>
+        </li> : "" }
 
-        <li className="nav-item">
-          <a onClick={loutOutUser} className="nav-link" href="#">Logout</a>
-        </li>
+       
       
       </ul>
     
