@@ -7,45 +7,41 @@ import {AiOutlinePlusCircle} from "react-icons/ai"
 
 
 function Home() {
-console.log("hey");
-
   // get all notes
-  useEffect(() => {
-    getAllNotes()
-  }, [])
+ 
   const [notes, setNotes] = useState([])
   
   let userToken = localStorage.getItem("userToken")
   let baseUrl ='https://sticky-note-fe.vercel.app/';
   var decoded = jwt_decode(userToken);
-  // console.log(decoded);
-  let notesObj = {
-    "token":userToken,
-    "userID":decoded._id
-    }
-    console.log(notesObj);
-    const [newNote, setNewNote] = useState({"title":"","desc":"","citizenID":decoded._id,"token":userToken})
+  const [userData, setUserData] = useState({"token":userToken,"userID": decoded._id})
+  const [newNote, setNewNote] = useState({"title":"","desc":"","citizenID":decoded._id,"token":userToken})
 
+    useEffect(() => {
+      getAllNotes()
+    }, [])
+//  function to display all notes in home 
 
   async function getAllNotes(){
-    console.log("hello");
-    let {data}= await axios.post(baseUrl+"getUserNotes", notesObj)
+    let {data}= await axios.post(baseUrl+"getUserNotes", userData)
+    // console.log(data);
     setNotes(data.Notes)
   }
-  console.log(notes);
+  // console.log(notes);
   function getNewNote(e){
-
     setNewNote({...newNote,[e.target.name]:e.target.value})
 
   }
   async function addNote(e){
     e.preventDefault()
     console.log(newNote);
+    document.getElementById("title1").value="";
+    document.getElementById("desc1").value=""
+
     let {data}= await axios.post(`https://sticky-note-fe.vercel.app/addNote`, newNote)
     console.log(data);
     if(data.message == "success") {
       getAllNotes()
-
     }
 
   }
@@ -72,8 +68,8 @@ console.log("hey");
                              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                          </div>
                          <div className="modal-body">
-                             <input  onChange={getNewNote} placeholder="Type Title" name="title" className="form-control" type="text" />
-                             <textarea onChange={getNewNote} className="form-control my-2" placeholder="Type your note" name="desc" id="" cols="30" rows="10"></textarea>
+                             <input  onChange={getNewNote} placeholder="Type Title" id="title1" name="title" className="form-control" type="text" />
+                             <textarea onChange={getNewNote} className="form-control my-2" placeholder="Type your note" name="desc" id="desc1" cols="30" rows="10"></textarea>
                          </div>
                          <div className="modal-footer">
                              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
@@ -83,8 +79,10 @@ console.log("hey");
                  </div>
              </form>
  </div>
+
+
      <div className="row">
-     <NoteCard notes={notes} getAllNotes={getAllNotes}/>
+     <NoteCard notes={notes} setNotes={setNotes} getAllNotes={getAllNotes}/>
     </div>
     </div>
   
